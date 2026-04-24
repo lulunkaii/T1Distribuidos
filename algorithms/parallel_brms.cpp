@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 
+#include "parallel_brms.h"
+
 void parallelBRMS(std::vector<int>& array, int left, int right){
     //función principal
 }

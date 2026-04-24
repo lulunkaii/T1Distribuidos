@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 
+#include "parallel_kway.h"
+
 void parallelKWay(std::vector<int>& array, int left, int right){
     
 }
