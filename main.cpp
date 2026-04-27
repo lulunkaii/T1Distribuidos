@@ -195,10 +195,10 @@ int main(int argc, char* argv[]){
     std::cout << "Procesadores: " << omp_get_num_procs() << std::endl;
     std::cout << "Repeticiones: " << runs << std::endl;
     std::cout << "Tamanos n: ";
-    std::cout << "Valor de k: " << k_value << std::endl;
     for (int s : sizes) std::cout << s << " "; std::cout << std::endl;
     std::cout << "Hebras p: ";
     for (int p : threadCounts) std::cout << p << " "; std::cout << std::endl;
+    std::cout << "Valor de k: " << k_value << std::endl;
 
     std::vector<Experiment> results;
 
