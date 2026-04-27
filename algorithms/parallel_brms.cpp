@@ -90,6 +90,7 @@ void parMergeBRMS(const std::vector<int>& A, int aLow, int aHigh,
 
     partition(A, aLow, aHigh, B, bLow, bHigh, ranks, logN);
 
+    #pragma omp parallel for 
     for (int i = 0; i < numTasks; i++) {
 
         int aStart = aLow + ranks[i];
@@ -100,24 +101,20 @@ void parMergeBRMS(const std::vector<int>& A, int aLow, int aHigh,
 
         int outStart = outLow + ranks[i] + (i * logN);
 
-        #pragma omp task shared(A, B, output, ranks)
-        {
-            int subSizeA = aEnd - aStart;
+        int subSizeA = aEnd - aStart;
 
-            if (subSizeA <= C_FACTOR * logN) {
-                seqMerge(A, aStart, aEnd,
-                        B, bStart, bEnd,
+        if (subSizeA <= C_FACTOR * logN) {
+            seqMerge(A, aStart, aEnd,
+                    B, bStart, bEnd,
+                    output, outStart);
+        } else {
+            // se intercambian A y B
+            parMergeBRMS(B, bStart, bEnd,
+                        A, aStart, aEnd,
                         output, outStart);
-            } else {
-                // se intercambian A y B
-                parMergeBRMS(B, bStart, bEnd,
-                            A, aStart, aEnd,
-                            output, outStart);
-            }
         }
     }
 
-    #pragma omp taskwait
 }
 
 
