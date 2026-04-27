@@ -12,6 +12,7 @@
 #include "seq_kway.h"
 #include "parallel_kway.h"
 #include "parallel_brms.h"
+#include "parallel_full.h"
 
 struct Experiment
 {
@@ -31,7 +32,7 @@ inline void validateInput(int argc, char* argv[], std::string& output_file, std:
     if (argc != 10){
         std::cout << "Uso: ./mergesort <output.csv> <algorithm> <runs> <exp_lower> <exp_upper> <exp_step> <p_lower> <p_upper> <k_value>" << std::endl;
         std::cout << "output.csv : archivo de salida con resultados" << std::endl;
-        std::cout << "algorithm : seq_mergesort | par_mergesort | seq_kway | par_kway | par_brms" << std::endl;
+        std::cout << "algorithm : seq_mergesort | par_mergesort | seq_kway | par_kway | par_brms | par_full" << std::endl;
         std::cout << "runs : repeticiones por experimento" << std::endl;
         std::cout << "exp_lower : exponente minimo para n (n = 2^exp_lower)" << std::endl;
         std::cout << "exp_upper : exponente maximo para n (n = 2^exp_upper)" << std::endl;
@@ -53,7 +54,7 @@ inline void validateInput(int argc, char* argv[], std::string& output_file, std:
         p_upper     = std::stoi(argv[8]);
         k_value     = std::stoi(argv[9]);
         
-        const std::vector<std::string> valid = { "seq_mergesort", "par_mergesort", "seq_kway", "par_kway", "par_brms"};
+        const std::vector<std::string> valid = { "seq_mergesort", "par_mergesort", "seq_kway", "par_kway", "par_brms", "par_full" };
         if (std::find(valid.begin(), valid.end(), algorithm) == valid.end()){
             std::cerr << "Algoritmo desconocido " << algorithm << std::endl;
             std::exit(EXIT_FAILURE);
@@ -154,6 +155,11 @@ std::tuple<double,double,double> benchmark(
             #pragma omp parallel
             #pragma omp single
             parallelBRMS(arr, left, right);
+        } else if (algorithm == "par_full") {
+            omp_set_num_threads(threads);
+            #pragma omp parallel
+            #pragma omp single
+            parallelFull(arr, left, right, k_value);
         }
 
         double t1 = omp_get_wtime();
@@ -183,12 +189,13 @@ int main(int argc, char* argv[]){
     for (int e = p_lower; e <= p_upper; e++)
         threadCounts.push_back(1 << e);
 
-    bool isParallel = (algorithm == "par_mergesort" || algorithm == "par_kway" || algorithm == "par_brms");
+    bool isParallel = (algorithm == "par_mergesort" || algorithm == "par_kway" || algorithm == "par_brms" || algorithm == "par_full");
 
     std::string serial_algo;
     if (algorithm == "par_mergesort") serial_algo = "seq_mergesort";
     else if (algorithm == "par_kway") serial_algo = "seq_kway";
     else if (algorithm == "par_brms") serial_algo = "seq_mergesort";
+    else if (algorithm == "par_full") serial_algo = "seq_kway";
     else serial_algo = algorithm;
 
     std::cout << "Algoritmo: " << algorithm << std::endl;

@@ -14,7 +14,8 @@ SRCS   = main.cpp \
     algorithms/parallel_mergesort.cpp \
     algorithms/seq_kway.cpp \
     algorithms/parallel_kway.cpp \
-    algorithms/parallel_brms.cpp
+    algorithms/parallel_brms.cpp \
+	algorithms/parallel_full.cpp
 
 # --- Argumentos por defecto ---
 RUNS    ?= 5
@@ -72,6 +73,12 @@ par_br: $(TARGET) init
 	$(P_C2C_REP)
 	$(P_RM_DATA)
 
+par_full: $(TARGET) init
+	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_full.csv par_full $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
+	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_full.csv par_full $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
+	$(P_C2C_REP)
+	$(P_RM_DATA)
+
 all_experiments: $(TARGET) init
 	@echo "Ejecutando experimentos..."
 	$(MAKE) seq_ms
@@ -79,6 +86,7 @@ all_experiments: $(TARGET) init
 	$(MAKE) seq_kw
 	$(MAKE) par_kw
 	$(MAKE) par_br
+	$(MAKE) par_full
 	python3 merge_results.py
 
 clean:
