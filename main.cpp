@@ -27,9 +27,9 @@ struct Experiment
 
 
 inline void validateInput(int argc, char* argv[], std::string& output_file, std::string& algorithm,
-                          int& runs, int& exp_lower, int& exp_upper, int& exp_step, int& p_lower, int& p_upper){
-    if (argc != 9){
-        std::cout << "Uso: ./mergesort <output.csv> <algorithm> <runs> <exp_lower> <exp_upper> <exp_step> <p_lower> <p_upper>" << std::endl;
+                          int& runs, int& exp_lower, int& exp_upper, int& exp_step, int& p_lower, int& p_upper, int& k_value) {
+    if (argc != 10){
+        std::cout << "Uso: ./mergesort <output.csv> <algorithm> <runs> <exp_lower> <exp_upper> <exp_step> <p_lower> <p_upper> <k_value>" << std::endl;
         std::cout << "output.csv : archivo de salida con resultados" << std::endl;
         std::cout << "algorithm : seq_mergesort | par_mergesort | seq_kway | par_kway | par_brms" << std::endl;
         std::cout << "runs : repeticiones por experimento" << std::endl;
@@ -38,7 +38,8 @@ inline void validateInput(int argc, char* argv[], std::string& output_file, std:
         std::cout << "exp_step : salto entre exponentes (multiplicativo, 2^step)" << std::endl;
         std::cout << "p_lower : exponente minimo de threads (p = 2^p_lower)" << std::endl;
         std::cout << "p_upper : exponente maximo de threads (p = 2^p_upper)" << std::endl;
-        std::cout << "\n Ejemplo: ./mergesort output/results.csv par_mergesort 5 20 26 2 0 3" << std::endl;
+        std::cout << "k_value : valor de k para k-way merge" << std::endl;
+        std::cout << "\n Ejemplo: ./mergesort output/results.csv par_mergesort 5 20 26 2 0 3 8" << std::endl;
         std::cout << "\t -> n en {2^20, 2^22, 2^24, 2^26} y p en {1,2,4,8}" << std::endl;
         std::exit(EXIT_FAILURE);
     } try {
@@ -50,6 +51,7 @@ inline void validateInput(int argc, char* argv[], std::string& output_file, std:
         exp_step    = std::stoi(argv[6]);
         p_lower     = std::stoi(argv[7]);
         p_upper     = std::stoi(argv[8]);
+        k_value     = std::stoi(argv[9]);
         
         const std::vector<std::string> valid = { "seq_mergesort", "par_mergesort", "seq_kway", "par_kway", "par_brms"};
         if (std::find(valid.begin(), valid.end(), algorithm) == valid.end()){
@@ -118,7 +120,8 @@ std::tuple<double,double,double> benchmark(
     const std::vector<int>& original,
     const std::string& algorithm,
     int threads,
-    int runs)
+    int runs,
+    int k_value)
 {
     std::vector<double> times;
     int left  = 0;
@@ -132,7 +135,7 @@ std::tuple<double,double,double> benchmark(
             sequentialMergeSort(arr, left, right);
 
         } else if (algorithm == "seq_kway") {
-            sequentialKWay(arr, left, right);
+            sequentialKWay(arr, left, right, k_value);
 
         } else if (algorithm == "par_mergesort") {
             omp_set_num_threads(threads);
@@ -144,7 +147,7 @@ std::tuple<double,double,double> benchmark(
             omp_set_num_threads(threads);
             #pragma omp parallel
             #pragma omp single
-            parallelKWay(arr, left, right);
+            parallelKWay(arr, left, right, k_value);
 
         } else if (algorithm == "par_brms") {
             omp_set_num_threads(threads);
@@ -168,8 +171,8 @@ std::tuple<double,double,double> benchmark(
 
 int main(int argc, char* argv[]){
     std::string output_file, algorithm;
-    int runs, exp_lower, exp_upper, exp_step, p_lower, p_upper;
-    validateInput(argc, argv, output_file, algorithm, runs, exp_lower, exp_upper, exp_step, p_lower, p_upper);
+    int runs, exp_lower, exp_upper, exp_step, p_lower, p_upper, k_value;
+    validateInput(argc, argv, output_file, algorithm, runs, exp_lower, exp_upper, exp_step, p_lower, p_upper, k_value);
 
     // Construir rangos de n y p
     std::vector<int> sizes;
@@ -192,6 +195,7 @@ int main(int argc, char* argv[]){
     std::cout << "Procesadores: " << omp_get_num_procs() << std::endl;
     std::cout << "Repeticiones: " << runs << std::endl;
     std::cout << "Tamanos n: ";
+    std::cout << "Valor de k: " << k_value << std::endl;
     for (int s : sizes) std::cout << s << " "; std::cout << std::endl;
     std::cout << "Hebras p: ";
     for (int p : threadCounts) std::cout << p << " "; std::cout << std::endl;
@@ -202,7 +206,7 @@ int main(int argc, char* argv[]){
         std::cout << "\n-- n = " << n << " --" << std::endl;
         auto original = generateArray(n);
 
-        auto [avg_s, mn_s, mx_s] = benchmark(original, serial_algo, -1, runs);
+        auto [avg_s, mn_s, mx_s] = benchmark(original, serial_algo, -1, runs, k_value);
         double t_serial = avg_s;
 
         Experiment es;
@@ -220,7 +224,7 @@ int main(int argc, char* argv[]){
         // Paralelo con cada p
         if (isParallel) {
             for (int p : threadCounts) {
-                auto [avg_p, mn_p, mx_p] = benchmark(original, algorithm, p, runs);
+                auto [avg_p, mn_p, mx_p] = benchmark(original, algorithm, p, runs, k_value);
 
                 Experiment ep;
                 ep.algorithm = algorithm;

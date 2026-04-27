@@ -23,6 +23,7 @@ EXP_HI  ?= 26
 EXP_ST  ?= 2
 P_LO    ?= 0
 P_HI    ?= 3
+K_VALUE ?= 4
 
 # Directorios
 OUT_DIR = output
@@ -50,7 +51,7 @@ seq_ms: $(TARGET) init
 	$(P_STAT) ./$(TARGET) $(OUT_DIR)/seq_mergesort.csv seq_mergesort $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) 0 0
 
 seq_kw: $(TARGET) init
-	$(P_STAT) ./$(TARGET) $(OUT_DIR)/seq_kway.csv seq_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) 0 0
+	$(P_STAT) ./$(TARGET) $(OUT_DIR)/seq_kway.csv seq_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) 0 0 $(K_VALUE)
 
 # --- Algoritmos Paralelos ---
 par_ms: $(TARGET) init
@@ -60,8 +61,8 @@ par_ms: $(TARGET) init
 	$(P_RM_DATA)
 
 par_kw: $(TARGET) init
-	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI)
-	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI)
+	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
+	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
 	$(P_C2C_REP)
 	$(P_RM_DATA)
 
