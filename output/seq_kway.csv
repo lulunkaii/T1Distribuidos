@@ -1,5 +1,0 @@
-algorithm,n,threads,time_avg,time_min,time_max,speedup,efficiency
-seq_kway,1048576,-1,0.454276,0.424809,0.482498,1,1
-seq_kway,4194304,-1,1.87092,1.81049,1.94118,1,1
-seq_kway,16777216,-1,5.05347,4.98023,5.12757,1,1
-seq_kway,67108864,-1,21.8464,21.6375,22.036,1,1

@@ -1,0 +1,5 @@
+algorithm,n,threads,time_avg,time_min,time_max,speedup,efficiency
+seq_mergesort,1048576,-1,0.121839,0.119658,0.128196,1,1
+seq_mergesort,4194304,-1,0.531321,0.528149,0.535203,1,1
+seq_mergesort,16777216,-1,2.30997,2.30707,2.31571,1,1
+seq_mergesort,67108864,-1,9.90472,9.88397,9.91763,1,1

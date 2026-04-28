@@ -1,0 +1,16 @@
+# started on Mon Apr 27 21:40:44 2026
+
+
+ Performance counter stats for './mergesort alg_results/par_kway.csv par_kway 5 20 26 2 0 3 8':
+
+ 2.170.848.218.907      cycles                                                                
+ 4.882.348.887.865      instructions                     #    2,25  insn per cycle            
+    10.798.110.125      cache-references                                                      
+       509.406.264      cache-misses                     #    4,72% of all cache refs         
+
+     338,980515054 seconds time elapsed
+
+     544,449076000 seconds user
+       7,662481000 seconds sys
+
+

@@ -1,10 +1,7 @@
-##agregar esta linea si tira error en la ejecución de perf
-##sudo sysctl -w kernel.perf_event_paranoid=-1
-##sudo sysctl -w kernel.kptr_restrict=0
+## agregar esta linea si tira error en la ejecución de perf
+## sudo sysctl -w kernel.perf_event_paranoid=-1
+## sudo sysctl -w kernel.kptr_restrict=0
 
-
-##Si no quieres que se ejecute dos veces cada vez que hagas un test en un algoritmo paralelo, 
-## puedes comentar la línea de perf c2c en el Makefile y dejar solo el perf stat (o viceversa).
 CXX      = g++
 CXXFLAGS = -O2 -fopenmp -std=c++17 -I algorithms/
 
@@ -15,7 +12,7 @@ SRCS   = main.cpp \
     algorithms/seq_kway.cpp \
     algorithms/parallel_kway.cpp \
     algorithms/parallel_brms.cpp \
-	algorithms/parallel_full.cpp
+    algorithms/parallel_full.cpp
 
 # --- Argumentos por defecto ---
 RUNS    ?= 5
@@ -24,21 +21,17 @@ EXP_HI  ?= 26
 EXP_ST  ?= 2
 P_LO    ?= 0
 P_HI    ?= 3
-K_VALUE ?= 4
+K_VALUE ?= 8
 
 # Directorios
-OUT_DIR = output
+OUT_DIR = alg_results
 PERF_DIR = perf_outputs
 
 # Eventos de monitoreo
-EVENTS = cycles,instructions,cache-references,cache-misses,stalled-cycles-backend
+EVENTS = cycles,instructions,cache-references,cache-misses
 
-# Comandos de Perf
+# Comandos de Perf (Solo Stat)
 P_STAT = perf stat -e $(EVENTS) -o $(PERF_DIR)/stat_$@.txt --append
-P_C2C  = perf c2c record -o $(PERF_DIR)/c2c_$@.data
-P_C2C_REP = perf c2c report -i $(PERF_DIR)/c2c_$@.data --stdio > $(PERF_DIR)/c2c_$@.txt
-# Comando para borrar el binario .data
-P_RM_DATA = rm -f $(PERF_DIR)/c2c_$@.data
 
 $(TARGET): $(SRCS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
@@ -57,27 +50,15 @@ seq_kw: $(TARGET) init
 # --- Algoritmos Paralelos ---
 par_ms: $(TARGET) init
 	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_mergesort.csv par_mergesort $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_mergesort.csv par_mergesort $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C_REP)
-	$(P_RM_DATA)
 
 par_kw: $(TARGET) init
 	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_kway.csv par_kway $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C_REP)
-	$(P_RM_DATA)
 
 par_br: $(TARGET) init
 	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_brms.csv par_brms $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_brms.csv par_brms $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C_REP)
-	$(P_RM_DATA)
 
 par_full: $(TARGET) init
 	$(P_STAT) ./$(TARGET) $(OUT_DIR)/par_full.csv par_full $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C) ./$(TARGET) $(OUT_DIR)/par_full.csv par_full $(RUNS) $(EXP_LO) $(EXP_HI) $(EXP_ST) $(P_LO) $(P_HI) $(K_VALUE)
-	$(P_C2C_REP)
-	$(P_RM_DATA)
 
 all_experiments: $(TARGET) init
 	@echo "Ejecutando experimentos..."

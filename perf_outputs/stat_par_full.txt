@@ -1,0 +1,16 @@
+# started on Mon Apr 27 21:50:10 2026
+
+
+ Performance counter stats for './mergesort alg_results/par_full.csv par_full 5 20 26 2 0 3 8':
+
+21.005.085.577.180      cycles                                                                
+ 9.014.348.916.958      instructions                     #    0,43  insn per cycle            
+   209.881.061.761      cache-references                                                      
+    47.052.529.624      cache-misses                     #   22,42% of all cache refs         
+
+    1547,490066513 seconds time elapsed
+
+    4503,176843000 seconds user
+     959,737485000 seconds sys
+
+

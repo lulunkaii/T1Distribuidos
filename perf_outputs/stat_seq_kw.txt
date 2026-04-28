@@ -1,0 +1,16 @@
+# started on Mon Apr 27 21:39:02 2026
+
+
+ Performance counter stats for './mergesort alg_results/seq_kway.csv seq_kway 5 20 26 2 0 0 8':
+
+   406.967.613.742      cycles                                                                
+   918.259.128.036      instructions                     #    2,26  insn per cycle            
+     1.960.636.344      cache-references                                                      
+       100.284.804      cache-misses                     #    5,11% of all cache refs         
+
+     102,071683917 seconds time elapsed
+
+     100,452270000 seconds user
+       1,599685000 seconds sys
+
+
