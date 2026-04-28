@@ -1,0 +1,51 @@
+# started on Mon Apr 27 18:30:09 2026
+
+
+ Performance counter stats for './mergesort output/seq_mergesort.csv seq_mergesort 5 20 26 2 0 0':
+
+         4.090.504      cycles                                                                
+         3.744.893      instructions                     #    0,92  insn per cycle            
+           247.757      cache-references                                                      
+            58.236      cache-misses                     #   23,51% of all cache refs         
+   <not supported>      stalled-cycles-backend                                                
+
+       0,001707947 seconds time elapsed
+
+       0,001333000 seconds user
+       0,001333000 seconds sys
+
+
+# started on Mon Apr 27 20:23:27 2026
+
+
+ Performance counter stats for './mergesort output/seq_mergesort.csv seq_mergesort 5 20 26 2 0 0':
+
+         3.036.904      cycles                                                                
+         3.807.106      instructions                     #    1,25  insn per cycle            
+           289.097      cache-references                                                      
+            74.227      cache-misses                     #   25,68% of all cache refs         
+   <not supported>      stalled-cycles-backend                                                
+
+       0,002657909 seconds time elapsed
+
+       0,001345000 seconds user
+       0,001345000 seconds sys
+
+
+# started on Mon Apr 27 20:28:04 2026
+
+
+ Performance counter stats for './mergesort output/seq_mergesort.csv seq_mergesort 5 20 26 2 0 0 4':
+
+    64.874.812.876      cycles                                                                
+   115.397.795.179      instructions                     #    1,78  insn per cycle            
+       974.356.905      cache-references                                                      
+        33.857.385      cache-misses                     #    3,47% of all cache refs         
+   <not supported>      stalled-cycles-backend                                                
+
+      16,286168346 seconds time elapsed
+
+      15,777588000 seconds user
+       0,504858000 seconds sys
+
+
