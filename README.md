@@ -6,7 +6,7 @@
 |--------|-----------|-------------|
 | Sofía Ignacia López Aguilera | 2022451769 | lulunkaii |
 | Antonia Renata Montero López | 2022416394 | amonlop |
-| Jhostian Matías San Martín Morales | XXXXXXXXXX | Jhoossmm |
+| Jhostian Matías San Martín Morales | 2022429453 | Jhoossmm |
 
 
 
